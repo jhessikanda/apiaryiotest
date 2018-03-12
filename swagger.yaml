@@ -31,6 +31,7 @@ paths:
             $ref: '#/definitions/AuthenticationResponse'
 
   /api/users/auth/revoke:
+      x-summary: Revoke Authentication
       post:
         summary: Sign-Out
         description: Revokes authentication tokens based on an existing user.
@@ -52,7 +53,9 @@ paths:
 
 securityDefinitions:
   Bearer:
-    type: basic
+    type: apiKey
+    name: Authorization
+    in: header
 
 definitions:
   AuthenticationRequest:
