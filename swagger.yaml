@@ -1,0 +1,94 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "congo-api"
+  description: API used by mobile and web UIs to make destructive operations (data writes).
+host: congo.ebanx.com
+basePath: /
+schemes:
+- https
+consumes:
+- application/json
+produces:
+- application/json
+
+paths:
+  x-summary: Authentication
+  /api/users/auth:
+    post:
+      summary: Sign-In
+      description: Authenticates an existing user based on given credentials.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthenticationRequest'
+      responses:
+        200:
+          description: 'Successful Response'
+          schema:
+            $ref: '#/definitions/AuthenticationResponse'
+
+  /api/users/auth/revoke:
+      post:
+        summary: Sign-Out
+        description: Revokes authentication tokens based on an existing user.
+        security:
+          - Bearer: []
+        parameters:
+          - name: body
+            in: body
+            required: true
+            schema:
+              $ref: '#/definitions/RevokeAuthenticationRequest'
+        responses:
+          200:
+            description: 'Successful Response'
+          401:
+            description: 'Unauthorized Response'
+          404:
+            description: 'Token Not Found Response'
+
+securityDefinitions:
+  Bearer:
+    type: basic
+    name: Authorization
+    in: header
+
+definitions:
+  AuthenticationRequest:
+    title: AuthenticationRequest
+    type: object
+    properties:
+      email:
+        type: string
+        default: 'user@email.com'
+      password:
+        type: string
+        default: 'passw***'
+    required:
+      - email
+      - password
+
+  AuthenticationResponse:
+    title: AuthenticationResponse
+    type: object
+    properties:
+      apiToken:
+        type: string
+        default: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvYW8gRGVsIFZhbGxlIiwiaWF0IjoxNTE2MjM5MDEyfQ.1CW_rI1WmeqdC8N4ls9hsLoi9KLY0RXEzTi_On4PQYU
+      firebaseToken:
+        type: string
+        default: fhtryvu78647f457f356c65v75uvb76b87bu87aflkjoiwnk231ajldl2i3iej23901roi2h98fdsnkjdfas9832
+
+  RevokeAuthenticationRequest:
+    title: RevokeAuthenticationResponse
+    type: object
+    properties:
+      firebaseToken:
+        type: string
+        default: 'fhtryvu78647f457f356c65v75uvb76b87bu87aflkjoiwnk231ajldl2i3iej23901roi2h98fdsnkjdfas9832'
+    required:
+      - firebaseToken
+      
