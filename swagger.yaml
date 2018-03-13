@@ -57,7 +57,7 @@ paths:
             description: 'Invalid Token Response'
           
 securityDefinitions:
-  Bearerpdate:
+  Bearer:
     type: apiKey
     name: Authorization
     in: header
