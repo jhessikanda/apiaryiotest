@@ -38,6 +38,11 @@ paths:
         security:
           - Bearer: []
         parameters:
+          - in: header
+            name: Authorization
+            type: string
+            required: true
+            description: Api token to be passed as Authorization header
           - name: body
             in: body
             required: true
@@ -49,14 +54,14 @@ paths:
           401:
             description: 'Unauthorized Response'
           404:
-            description: 'Token Not Found Response'
-
+            description: 'Invalid Token Response'
+          
 securityDefinitions:
-  Bearer:
+  Bearerpdate:
     type: apiKey
     name: Authorization
     in: header
-
+    
 definitions:
   AuthenticationRequest:
     title: AuthenticationRequest
