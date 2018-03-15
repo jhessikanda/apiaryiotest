@@ -30,19 +30,13 @@ paths:
           schema:
             $ref: '#/definitions/AuthenticationResponse'
 
-  /api/users/auth/revoke:
+  /api/users/auth:
       x-summary: Revoke Authentication
-      post:
+      delete:
         summary: Sign-Out
         description: Revokes authentication tokens based on an existing user.
         security:
           - Bearer: []
-        parameters:
-          - name: body
-            in: body
-            required: true
-            schema:
-              $ref: '#/definitions/RevokeAuthenticationRequest'
         responses:
           200:
             description: 'Successful Response'
@@ -82,13 +76,3 @@ definitions:
       firebaseToken:
         type: string
         default: fhtryvu78647f457f356c65v75uvb76b87bu87aflkjoiwnk231ajldl2i3iej23901roi2h98fdsnkjdfas9832
-
-  RevokeAuthenticationRequest:
-    title: RevokeAuthenticationRequest
-    type: object
-    properties:
-      firebaseToken:
-        type: string
-        default: 'fhtryvu78647f457f356c65v75uvb76b87bu87aflkjoiwnk231ajldl2i3iej23901roi2h98fdsnkjdfas9832'
-    required:
-      - firebaseToken
