@@ -37,20 +37,26 @@ paths:
         description: Revokes authentication tokens based on an existing user.
         security:
           - Bearer: []
+        parameters:
+          - in: header
+            name: Authorization
+            type: string
+            required: true
+            description: Api token to be passed as Authorization header
         responses:
           200:
             description: 'Successful Response'
           401:
             description: 'Unauthorized Response'
           404:
-            description: 'Token Not Found Response'
-
+            description: 'Invalid Token Response'
+          
 securityDefinitions:
   Bearer:
     type: apiKey
     name: Authorization
     in: header
-
+    
 definitions:
   AuthenticationRequest:
     title: AuthenticationRequest
