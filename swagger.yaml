@@ -12,48 +12,12 @@ consumes:
 produces:
 - application/json
 
-paths:
-  /api/users/auth:
-    x-summary: Authentication
-    post:
-      summary: Sign-In
-      description: Authenticates an existing user based on given credentials.
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/AuthenticationRequest'
-      responses:
-        200:
-          description: 'Successful Response'
-          schema:
-            $ref: '#/definitions/AuthenticationResponse'
-    delete:
-      summary: Sign-Out
-      description: Revokes authentication tokens based on an existing user.
-      security:
-        - Bearer: []
-      parameters:
-        - in: header
-          name: Authorization
-          type: string
-          required: true
-          description: Api token to be passed as Authorization header
-      responses:
-        200:
-          description: 'Successful Response'
-        401:
-          description: 'Unauthorized Response'
-        404:
-          description: 'Invalid Token Response'
-          
 securityDefinitions:
   Bearer:
     type: apiKey
     name: Authorization
     in: header
-    
+
 definitions:
   AuthenticationRequest:
     title: AuthenticationRequest
@@ -79,3 +43,40 @@ definitions:
       firebaseToken:
         type: string
         default: fhtryvu78647f457f356c65v75uvb76b87bu87aflkjoiwnk231ajldl2i3iej23901roi2h98fdsnkjdfas9832
+
+paths:
+  /api/users/auth:
+    x-summary: Authentication
+    post:
+      summary: Sign-In
+      description: Authenticates an existing user based on given credentials.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AuthenticationRequest'
+      responses:
+        200:
+          description: 'Successful Response'
+          schema:
+            $ref: '#/definitions/AuthenticationResponse'
+
+    delete:
+      summary: Sign-Out
+      description: Revokes authentication tokens based on an existing user.
+      security:
+        - Bearer: []
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Api token to be passed as Authorization header
+      responses:
+        200:
+          description: 'Successful Response'
+        401:
+          description: 'Unauthorized Response'
+        404:
+          description: 'Invalid Token Response'
