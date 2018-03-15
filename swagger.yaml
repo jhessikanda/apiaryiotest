@@ -29,27 +29,24 @@ paths:
           description: 'Successful Response'
           schema:
             $ref: '#/definitions/AuthenticationResponse'
-
-  /api/users/auth:
-      x-summary: Revoke Authentication
-      delete:
-        summary: Sign-Out
-        description: Revokes authentication tokens based on an existing user.
-        security:
-          - Bearer: []
-        parameters:
-          - in: header
-            name: Authorization
-            type: string
-            required: true
-            description: Api token to be passed as Authorization header
-        responses:
-          200:
-            description: 'Successful Response'
-          401:
-            description: 'Unauthorized Response'
-          404:
-            description: 'Invalid Token Response'
+    delete:
+      summary: Sign-Out
+      description: Revokes authentication tokens based on an existing user.
+      security:
+        - Bearer: []
+      parameters:
+        - in: header
+          name: Authorization
+          type: string
+          required: true
+          description: Api token to be passed as Authorization header
+      responses:
+        200:
+          description: 'Successful Response'
+        401:
+          description: 'Unauthorized Response'
+        404:
+          description: 'Invalid Token Response'
           
 securityDefinitions:
   Bearer:
