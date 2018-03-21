@@ -1,82 +1,192 @@
-swagger: '2.0'
-info:
-  version: '1.0'
-  title: "congo-api"
-  description: API used by mobile and web UIs to make destructive operations (data writes).
-host: congo.ebanx.com
-basePath: /
-schemes:
-- https
-consumes:
-- application/json
-produces:
-- application/json
+FORMAT: 1A
+HOST: https://congo.ebanx.com/
 
-securityDefinitions:
-  Bearer:
-    type: apiKey
-    name: Authorization
-    in: header
+# EBANX
+EBANX API
 
-definitions:
-  AuthenticationRequest:
-    title: AuthenticationRequest
-    type: object
-    properties:
-      email:
-        type: string
-        default: 'user@email.com'
-      password:
-        type: string
-        default: 'passw***'
-    required:
-      - email
-      - password
+# Api Users Auth [/api/users/auth]
 
-  AuthenticationResponse:
-    title: AuthenticationResponse
-    type: object
-    properties:
-      apiToken:
-        type: string
-        default: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvYW8gRGVsIFZhbGxlIiwiaWF0IjoxNTE2MjM5MDEyfQ.1CW_rI1WmeqdC8N4ls9hsLoi9KLY0RXEzTi_On4PQYU
-      firebaseToken:
-        type: string
-        default: fhtryvu78647f457f356c65v75uvb76b87bu87aflkjoiwnk231ajldl2i3iej23901roi2h98fdsnkjdfas9832
+## Revoking a session [DELETE]
+Destroys the current user session (identified by the `Authorization` HTTP header), signing out the user in the associated device.
 
-paths:
-  /api/users/auth:
-    x-summary: Authentication
-    post:
-      summary: Sign-In
-      description: Authenticates an existing user based on given credentials.
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/AuthenticationRequest'
-      responses:
-        200:
-          description: 'Successful Response'
-          schema:
-            $ref: '#/definitions/AuthenticationResponse'
++ Request (application/json)
+    + Headers
 
-    delete:
-      summary: Sign-Out
-      description: Revokes authentication tokens based on an existing user.
-      security:
-        - Bearer: []
-      parameters:
-        - in: header
-          name: Authorization
-          type: string
-          required: true
-          description: Api token to be passed as Authorization header
-      responses:
-        200:
-          description: 'Successful Response'
-        401:
-          description: 'Unauthorized Response'
-        404:
-          description: 'Invalid Token Response'
+            Authorization: Bearer E6JdhlxqUwh2filKiwRHxGgKdh48TItt
+
++ Response 200
++ Response 401
+
+        Unauthorized Response
+
++ Response 404
+
+        Invalid Token Response
+
+
+# Api Deposits [/api/deposits]
+
+## Creating a new deposit [POST]
+Creates a new deposit associated to the current user.
+
++ Request (application/json)
+    + Headers
+
+            Authorization: Bearer E6JdhlxqUwh2filKiwRHxGgKdh48TItt
+
+    + Attributes (CreateDepositRequest)
+
++ Response 200 (application/json)
+
+        Successful response
+
+    + Attributes (CreateDepositResponse)
+
+# Api Pwb [/api/pwb]
+
+## Paying with balance [POST]
+Confirms an EBANX payment using the balance of the current user.
+
++ Request (application/json)
+    + Headers
+
+            Authorization: Bearer E6JdhlxqUwh2filKiwRHxGgKdh48TItt
+
+    + Attributes (PayWithBalanceRequest)
+
++ Response 200 (application/json)
+
+        Successful response
+
+    + Attributes (PayWithBalanceResponse)
+
+# Api Withdrawal [/api/withdrawals]
+
+## Request withdrawal [POST]
+Request a withdrawal from the balance of the current user.
+
++ Request (application/json)
+    + Headers
+
+            Authorization: Bearer E6JdhlxqUwh2filKiwRHxGgKdh48TItt
+
+    + Attributes (WithdrawalRequest)
+
++ Response 200 (application/json)
+
+        Successful response
+
+# Data Structures
+
+## Barcode (object)
+
+
+### Properties
++ `rawCode` (string, optional)
++ `format` (string, optional)
+
+
+## Voucher (object)
+
+
+### Properties
++ `code`: `34191230338482576345562038592440770780000003774` (string, optional)
++ `printUrl`: `https://dev-pay.ebanx.com/print/57e2a55bd2c382c1a6501862d528d1baf6daa54be0a53be5` (string, optional)
++ `barcode`: `https://dev-pay.ebanx.com/print/57e2a55bd2c382c1a6501862d528d1baf6daa54be0a53be5` (Barcode, optional)
+
+
+## CreateDepositRequest (object)
+
+
+### Properties
++ `instrumentType` (enum[string], required) - Type of instrument used to fund deposit prefixed by country code.
+    + `BR_BOLETO`
+    + `MX_OXXO`
+    + `MX_SPEI`
+    + `CO_BALOTO`
+    + `PE_PAGOEFECTIVO`
+    + `BR_TEF`
+    + `MX_PSE`
+    + `CL_SENCILLITO`
+    + `CL_SERVIPAG`
+    + `PE_SAFETYPAY`
++ `currency` (string, required) - Currency code
++ `amount` (string, required) - Deposit amount as decimal
++ `exchangeRateId` (string, required) - Public id of ExchangeRate used on deposit calculations
+
+
+## CreateDepositResponse (object)
+
+
+### Properties
++ `id` (string, optional) - Public id of exchange or transfer that was created
++ `type` (enum[string], optional) - Type of model created
+    + `EXCHANGE`
+    + `TRANSFER`
++ `dueAt` (number, optional)
++ `redirectUrl` (string, optional)
++ `voucher` (Voucher, optional)
+
+
+## PayWithBalanceRequest (object)
+
+
+### Properties
++ `paymentHash` (string, required) - The `hash` of the EBANX payment to be confirmed
+
+
+## PayWithBalanceResponse (object)
+
+
+### Properties
++ `id` (string, optional) - Public id of exchange or transfer that was created
++ `type` (enum[string], optional) - Type of model created
+    + `EXCHANGE`
+    + `TRANSFER`
+
+
+## AccountHolder (object)
+
+
+### Properties
++ `name`: `DIOGENES FALCAO` (string, required) - Required for BRL, CLP, COP, PEN, MXN
++ `document`: `12345678910` (string, required) - Required for BRL, CLP (RUT), COP, PEN (DNI)
++ `documentType`: `CEDULA CIDADANIA` (enum[string], optional) - Required for COP
+    + `CEDULA CIDADANIA`
+    + `CEDULA EXTRANJERIA`
++ `holderType`: `NATURAL` (enum[string], optional) - Required for BRL, CLP
+    + `NATURAL`
+    + `LEGAL`
+
+
+## BankAccount (object)
+
+
+### Properties
++ `currency`: `BRL` (string, required) - Bank account currency
+    + Default: `BRL`
++ `bankCode`: `ITAU` (string, required) - Required for BRL, CLP, COP, PEN
++ `accountType`: `CHECKING` (enum[string], required) - Required for BRL, CLP, COP, PEN
+    + `CHECKING`
+    + `SAVINGS`
++ `accountNumber`: `012345` (string, required) - Required for BRL, CLP, COP, PEN (CCI)
++ `accountCheckDigit`: `X` (string, optional) - Required for BRL
++ `agencyNumber`: `12345` (string, optional) - Required for BRL
++ `agencyCheckDigit`: `8` (string, optional) - Required for some banks of BRL
++ `operation`: `013` (string, optional) - Required for Caixa Economica BRL
++ `clabe`: `123456789123456789` (string, optional) - Required for MXN
++ `accountHolder` (AccountHolder, required) - Account holder details
+
+
+## WithdrawalRequest (object)
+
+
+### Properties
++ `requestedAmount`: 100.30 (number, required)
++ `requestedCurrency`: `USD` (string, required)
+    + Default: `USD`
++ `exchangeRateId`: `bEqWuGlfCOdf5we5` (string, required)
++ `saveBankAccount`: true (boolean, required)
+    + Default: `true`
++ `bankAccountId`: `ts6EHdZz18OHsi4d` (string, optional) - Optional, replaces bankAccount. Used in case of saved bank accounts.
++ `bankAccount` (BankAccount, optional) - Bank Account information
