@@ -1,192 +1,239 @@
-FORMAT: 1A
-HOST: https://congo.ebanx.com/
-
-# EBANX
-EBANX API
-
-# Api Users Auth [/api/users/auth]
-
-## Revoking a session [DELETE]
-Destroys the current user session (identified by the `Authorization` HTTP header), signing out the user in the associated device.
-
-+ Request (application/json)
-    + Headers
-
-            Authorization: Bearer E6JdhlxqUwh2filKiwRHxGgKdh48TItt
-
-+ Response 200
-+ Response 401
-
-        Unauthorized Response
-
-+ Response 404
-
-        Invalid Token Response
-
-
-# Api Deposits [/api/deposits]
-
-## Creating a new deposit [POST]
-Creates a new deposit associated to the current user.
-
-+ Request (application/json)
-    + Headers
-
-            Authorization: Bearer E6JdhlxqUwh2filKiwRHxGgKdh48TItt
-
-    + Attributes (CreateDepositRequest)
-
-+ Response 200 (application/json)
-
-        Successful response
-
-    + Attributes (CreateDepositResponse)
-
-# Api Pwb [/api/pwb]
-
-## Paying with balance [POST]
-Confirms an EBANX payment using the balance of the current user.
-
-+ Request (application/json)
-    + Headers
-
-            Authorization: Bearer E6JdhlxqUwh2filKiwRHxGgKdh48TItt
-
-    + Attributes (PayWithBalanceRequest)
-
-+ Response 200 (application/json)
-
-        Successful response
-
-    + Attributes (PayWithBalanceResponse)
-
-# Api Withdrawal [/api/withdrawals]
-
-## Request withdrawal [POST]
-Request a withdrawal from the balance of the current user.
-
-+ Request (application/json)
-    + Headers
-
-            Authorization: Bearer E6JdhlxqUwh2filKiwRHxGgKdh48TItt
-
-    + Attributes (WithdrawalRequest)
-
-+ Response 200 (application/json)
-
-        Successful response
-
-# Data Structures
-
-## Barcode (object)
-
-
-### Properties
-+ `rawCode` (string, optional)
-+ `format` (string, optional)
-
-
-## Voucher (object)
-
-
-### Properties
-+ `code`: `34191230338482576345562038592440770780000003774` (string, optional)
-+ `printUrl`: `https://dev-pay.ebanx.com/print/57e2a55bd2c382c1a6501862d528d1baf6daa54be0a53be5` (string, optional)
-+ `barcode`: `https://dev-pay.ebanx.com/print/57e2a55bd2c382c1a6501862d528d1baf6daa54be0a53be5` (Barcode, optional)
-
-
-## CreateDepositRequest (object)
-
-
-### Properties
-+ `instrumentType` (enum[string], required) - Type of instrument used to fund deposit prefixed by country code.
-    + `BR_BOLETO`
-    + `MX_OXXO`
-    + `MX_SPEI`
-    + `CO_BALOTO`
-    + `PE_PAGOEFECTIVO`
-    + `BR_TEF`
-    + `MX_PSE`
-    + `CL_SENCILLITO`
-    + `CL_SERVIPAG`
-    + `PE_SAFETYPAY`
-+ `currency` (string, required) - Currency code
-+ `amount` (string, required) - Deposit amount as decimal
-+ `exchangeRateId` (string, required) - Public id of ExchangeRate used on deposit calculations
-
-
-## CreateDepositResponse (object)
-
-
-### Properties
-+ `id` (string, optional) - Public id of exchange or transfer that was created
-+ `type` (enum[string], optional) - Type of model created
-    + `EXCHANGE`
-    + `TRANSFER`
-+ `dueAt` (number, optional)
-+ `redirectUrl` (string, optional)
-+ `voucher` (Voucher, optional)
-
-
-## PayWithBalanceRequest (object)
-
-
-### Properties
-+ `paymentHash` (string, required) - The `hash` of the EBANX payment to be confirmed
-
-
-## PayWithBalanceResponse (object)
-
-
-### Properties
-+ `id` (string, optional) - Public id of exchange or transfer that was created
-+ `type` (enum[string], optional) - Type of model created
-    + `EXCHANGE`
-    + `TRANSFER`
-
-
-## AccountHolder (object)
-
-
-### Properties
-+ `name`: `DIOGENES FALCAO` (string, required) - Required for BRL, CLP, COP, PEN, MXN
-+ `document`: `12345678910` (string, required) - Required for BRL, CLP (RUT), COP, PEN (DNI)
-+ `documentType`: `CEDULA CIDADANIA` (enum[string], optional) - Required for COP
-    + `CEDULA CIDADANIA`
-    + `CEDULA EXTRANJERIA`
-+ `holderType`: `NATURAL` (enum[string], optional) - Required for BRL, CLP
-    + `NATURAL`
-    + `LEGAL`
-
-
-## BankAccount (object)
-
-
-### Properties
-+ `currency`: `BRL` (string, required) - Bank account currency
-    + Default: `BRL`
-+ `bankCode`: `ITAU` (string, required) - Required for BRL, CLP, COP, PEN
-+ `accountType`: `CHECKING` (enum[string], required) - Required for BRL, CLP, COP, PEN
-    + `CHECKING`
-    + `SAVINGS`
-+ `accountNumber`: `012345` (string, required) - Required for BRL, CLP, COP, PEN (CCI)
-+ `accountCheckDigit`: `X` (string, optional) - Required for BRL
-+ `agencyNumber`: `12345` (string, optional) - Required for BRL
-+ `agencyCheckDigit`: `8` (string, optional) - Required for some banks of BRL
-+ `operation`: `013` (string, optional) - Required for Caixa Economica BRL
-+ `clabe`: `123456789123456789` (string, optional) - Required for MXN
-+ `accountHolder` (AccountHolder, required) - Account holder details
-
-
-## WithdrawalRequest (object)
-
-
-### Properties
-+ `requestedAmount`: 100.30 (number, required)
-+ `requestedCurrency`: `USD` (string, required)
-    + Default: `USD`
-+ `exchangeRateId`: `bEqWuGlfCOdf5we5` (string, required)
-+ `saveBankAccount`: true (boolean, required)
-    + Default: `true`
-+ `bankAccountId`: `ts6EHdZz18OHsi4d` (string, optional) - Optional, replaces bankAccount. Used in case of saved bank accounts.
-+ `bankAccount` (BankAccount, optional) - Bank Account information
+---
+swagger: "2.0"
+info:
+  description: "EBANX API"
+  version: "1.0-SNAPSHOT"
+  title: "EBANX"
+  license:
+    name: "EBANX(Proprietary)"
+host: "congo.ebanx.com"
+basePath: "/"
+tags:
+- name: "Agent Authentication"
+- name: "Money Withdrawal"
+- name: "User Authentication"
+schemes:
+- "https"
+paths:
+  /api/users/auth:
+    post:
+      tags:
+      - "User Authentication"
+      summary: "Creating a session"
+      description: "Authenticates an existing user based on given credentials and\
+        \ creates a session for him associated to the current device."
+      operationId: "authenticate"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/AuthenticationRequest"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/AuthenticationResponse"
+        401:
+          description: "Unauthorized"
+  /api/withdrawals:
+    post:
+      tags:
+      - "Money Withdrawal"
+      summary: "Request a withdrawal"
+      description: "Requests a withdrawal from user balance"
+      operationId: "withdrawal"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/WithdrawalRequest"
+      responses:
+        200:
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        500:
+          description: "Internal Error"
+  /management/auth:
+    post:
+      tags:
+      - "Agent Authentication"
+      summary: "Creating an agent session"
+      description: "Authenticates an agent based on google token, creates a session\
+        \ for her/him and returns a BearerAuthenticationToken."
+      operationId: "authenticateAgent"
+      parameters: []
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/AuthenticationResponse"
+        401:
+          description: "Agent unauthorized"
+securityDefinitions:
+  Bearer:
+    description: "All API operations protected by this security method require an\
+      \ Authorization HTTP header with a JWT token associated to a previously authenticated\
+      \ session."
+    type: "apiKey"
+    name: "Bearer"
+    in: "header"
+definitions:
+  AccountHolder:
+    type: "object"
+    required:
+    - "documentNumber"
+    - "documentType"
+    - "fullName"
+    - "holderType"
+    properties:
+      fullName:
+        type: "string"
+        example: "Joao Silva"
+        description: "fullName"
+      documentNumber:
+        type: "string"
+        example: "0876543780"
+        description: "documentNumber"
+      documentType:
+        type: "string"
+        example: "CEDULA_CIDADANIA"
+        description: "documentType"
+        enum:
+        - "CEDULA_CIDADANIA"
+        - "CEDULA_EXTRANJERIA"
+      holderType:
+        type: "string"
+        example: "NATURAL"
+        description: "holderType"
+        enum:
+        - "NATURAL"
+        - "LEGAL"
+  AuthenticationRequest:
+    type: "object"
+    required:
+    - "email"
+    - "password"
+    properties:
+      email:
+        type: "string"
+        example: "dev@ebanx.com"
+        description: "email"
+      password:
+        type: "string"
+        example: "123456"
+        description: "password"
+  AuthenticationResponse:
+    type: "object"
+    properties:
+      firebaseToken:
+        type: "string"
+        example: "fhtryvu78647f457f356c65v75uvb76b87bu87aflkjoiwnk231ajldl2i3iej23901roi2h98fdsnkjdfas9832"
+      apiToken:
+        type: "string"
+        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvYW8gRGVsIFZhbGxlIiwiaWF0IjoxNTE2MjM5MDEyfQ.1CW_rI1WmeqdC8N4ls9hsLoi9KLY0RXEzTi_On4PQYU"
+  BankAccount:
+    type: "object"
+    required:
+    - "accountNumber"
+    - "accountType"
+    - "country"
+    - "currency"
+    properties:
+      bankAccountId:
+        type: "string"
+        example: "xxo9qrbyx1frzqi4"
+        description: "bankAccountId"
+      currency:
+        example: "BRL"
+        description: "currency"
+        $ref: "#/definitions/Currency"
+      country:
+        type: "string"
+        example: "BR"
+        description: "country"
+      bankCode:
+        type: "string"
+        example: "Itau"
+        description: "bankCode"
+      accountType:
+        type: "string"
+        example: "CHECKING"
+        description: "accountType"
+        enum:
+        - "CHECKING"
+        - "SAVINGS"
+      accountNumber:
+        type: "string"
+        example: "0123456"
+        description: "accountNumber"
+      accountCheckDigit:
+        type: "string"
+        example: "X"
+        description: "accountCheckDigit"
+      agencyNumber:
+        type: "string"
+        example: "1234"
+        description: "agencyNumber"
+      agencyCheckDigit:
+        type: "string"
+        example: "0"
+        description: "agencyCheckDigit"
+      operation:
+        type: "string"
+        example: "013"
+        description: "operation"
+      clabe:
+        type: "string"
+        example: "123456789123456789"
+        description: "clabe"
+  Currency:
+    type: "object"
+    properties:
+      currencyCode:
+        type: "string"
+      defaultFractionDigits:
+        type: "integer"
+        format: "int32"
+      numericCode:
+        type: "integer"
+        format: "int32"
+      displayName:
+        type: "string"
+      symbol:
+        type: "string"
+  WithdrawalRequest:
+    type: "object"
+    required:
+    - "accountHolder"
+    - "bankAccount"
+    - "requestedAmount"
+    - "requestedCurrency"
+    - "saveBankAccount"
+    properties:
+      requestedAmount:
+        type: "number"
+        example: 180.9
+        description: "requestedAmount"
+      requestedCurrency:
+        example: "BRL"
+        description: "requestedCurrency"
+        $ref: "#/definitions/Currency"
+      exchangeRateId:
+        type: "string"
+        example: "7ppmtkt6h30xdw7v"
+        description: "exchangeRateId"
+      saveBankAccount:
+        type: "boolean"
+        example: true
+        description: "saveBankAccount"
+      bankAccount:
+        description: "bankAccount"
+        $ref: "#/definitions/BankAccount"
+      accountHolder:
+        description: "accountHolder"
+        $ref: "#/definitions/AccountHolder"
